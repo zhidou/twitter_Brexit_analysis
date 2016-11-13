@@ -1,133 +1,107 @@
-import urllib.request, urllib.parse, urllib.error,urllib.request,urllib.error,urllib.parse,json,re,datetime,sys,http.cookiejar
+import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error,urllib.parse,json,re,datetime,sys,http.cookiejar
 from textblob import TextBlob
 from got3 import models
 from pyquery import PyQuery
+import time
+import numpy as np
+
 
 class TweetManager:
     def __init__(self):
         pass
-    @staticmethod
-    def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
-        emoticons_str = r"""
-            (?:
-                [:=;] # Eyes
-                [oO\-]? # Nose (optional)
-                [D\)\]\(\]/\\OpP] # Mouth
-            )"""
 
-        regex_str = [
-            # emoticons_str,
-            r'<[^>]+>',  # HTML tags
-            r'(?:@[\w_]+)',  # @-mentions
-            # r"(?:\#+[\w_]+[\w\'_\-]*[\w_]+)", # hash-tags
-            r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+',  # URLs
-            # r'(?:(?:\d+,?)+(?:\.?\d+)?)', # numbers
-            # r"(?:[a-z][a-z'\-_]+[a-z])", # words with - and '
-            # r'(?:[\w_]+)', # other words
-            # r'(?:\S)' # anything else
-        ]
-
-        refreshCursor = ''
+    # @staticmethod
+    def getTweets(self, criteria, receiveBuffer = None, bufferLength = 100):
+        tweetCriteria = criteria[0]
+        month = criteria[1]
+        refreshCursor = tweetCriteria.refreshCursor
 
         counter = 0
+        output_counter = 0
         resultsAux = []
         cookieJar = http.cookiejar.CookieJar()
 
         active = True
+        urlInfo = self.generateUrl(tweetCriteria)
 
         while active:
-            json = TweetManager.getJsonReponse(tweetCriteria, refreshCursor, cookieJar)
-            if len(json['items_html'].strip()) == 0:
-                break
 
-            refreshCursor = json['min_position']
-            tweets = PyQuery(json['items_html'])('div.js-stream-tweet')
+            tweets = []
+            for i in range(4):
+                json = self.getJsonReponse(urlInfo, refreshCursor, cookieJar, month)
+                if len(json['items_html'].strip()) == 0:
+                    break
+                refreshCursor = json['min_position']
+                tweets_html = PyQuery(json['items_html'])('div.js-stream-tweet')
+
+                tweets.append(tweets_html[np.random.randint(0, len(tweets_html))])
 
             if len(tweets) == 0:
                 break
 
-            for tweetHTML in tweets:
-                tweetPQ = PyQuery(tweetHTML)
-                tweet = models.Tweet()
+            tweetHTML = tweets[np.random.randint(0, len(tweets))]
 
-                # lang = tweetPQ('p.js-tweet-text').attr('lang')
-                # if lang != 'en':
-                #     continue
+            tweetPQ = PyQuery(tweetHTML)
+            tweet = models.Tweet()
 
-                # usernameTweet = tweetPQ("span.username.js-action-profile-name b").text();
-                txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
+            # process text
+            txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
+            txt = re.sub(r"http[s]?://.(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+", '', txt)
+            txt = re.sub(r'(?:@[\w_]+)', '', txt)
+            txt = re.sub(r'[\w]+/(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]\s))+', '', txt)
+            txt = re.sub(r'(?:./[0-9]+)', '', txt)
+            txt = txt.replace(',', '')
+            txt = txt.replace('/ ', '')
+            txt1 = txt
+            txt = re.sub(r"(?:\#+[\w_]+[\w\'_\-]*[\w_]+)", '', txt)
 
+            blob = TextBlob(txt)
+            polarity, subjectivity = blob.sentiment
 
-                txt = re.sub(r"http[s]?://.(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+", '', txt)
-                txt = re.sub(r'(?:@[\w_]+)', '', txt)
-                txt = re.sub(r'[\w]+/(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]\s))+', '', txt)
-                txt = re.sub(r'(?:./[0-9]+)', '', txt)
-                txt = txt.replace(',', '')
-                txt = txt.replace('/ ','')
-                txt1 = txt
-                txt = re.sub(r" \#", '', txt)
+            dateSec = int(tweetPQ("small.time span.js-short-timestamp").attr("data-time"))
 
-                blob = TextBlob(txt)
-                polarity, subjectivity = blob.sentiment
+            id = tweetPQ.attr("data-tweet-id")
+            usr_id = int(tweetPQ("a.js-user-profile-link").attr("data-user-id"))
 
-                # retweets = int(tweetPQ("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""));
-                # favorites = int(tweetPQ("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""));
-                dateSec = int(tweetPQ("small.time span.js-short-timestamp").attr("data-time"))
-                id = tweetPQ.attr("data-tweet-id")
+            geo = ''
+            geoSpan = tweetPQ('span.Tweet-geo')
+            if len(geoSpan) > 0:
+                geo = geoSpan.attr('title')
 
-                usr_id = tweetPQ.attr('data-user-id')
-                # permalink = tweetPQ.attr("data-permalink-path");
-                # user_id = int(tweetPQ("a.js-user-profile-link").attr("data-user-id"))
+            tweet.id = id
+            tweet.user_id = usr_id
+            tweet.wordnouns = (",").join(blob.noun_phrases)
+            tweet.polarity = polarity
+            tweet.subjectivity= subjectivity
+            tweet.text = txt
+            tweet.date = datetime.datetime.fromtimestamp(dateSec)
+            tweet.formatted_date = datetime.datetime.fromtimestamp(dateSec).strftime("%a %b %d %X +0000 %Y")
+            tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(txt1))
+            tweet.geo = geo
 
-                geo = ''
-                geoSpan = tweetPQ('span.Tweet-geo')
-                if len(geoSpan) > 0:
-                    geo = geoSpan.attr('title')
-                # urls = []
-                # for link in tweetPQ("a"):
-                # 	try:
-                # 		urls.append((link.attrib["data-expanded-url"]))
-                # 	except KeyError:
-                # 		pass
-                tweet.id = id
-                # tweet.permalink = 'https://twitter.com' + permalink
-                # tweet.username = usernameTweet
+            counter += 1
+            resultsAux.append(tweet)
+            print(month + " download {}".format(counter))
+            if receiveBuffer and len(resultsAux) >= bufferLength:
+                output_counter += len(resultsAux)
+                receiveBuffer(resultsAux)
+                resultsAux = []
+                print(month + " {} Tweets saved on file..".format(output_counter))
 
-                tweet.user_id = usr_id
-                tweet.wordnouns = (",").join(blob.noun_phrases)
-                tweet.polarity = polarity
-                tweet.subjectivity= subjectivity
-                tweet.text = txt
-                tweet.date = datetime.datetime.fromtimestamp(dateSec)
-                tweet.formatted_date = datetime.datetime.fromtimestamp(dateSec).strftime("%a %b %d %X +0000 %Y")
-                # tweet.retweets = retweets
-                # tweet.favorites = favorites
-                # tweet.mentions = " ".join(re.compile('(@\\w*)').findall(tweet.text))
-                tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(txt1))
-                tweet.geo = geo
-                # tweet.urls = ",".join(urls)
-                # tweet.author_id = user_id
-
-                counter += 1
-                resultsAux.append(tweet)
-
-                if receiveBuffer and len(resultsAux) >= bufferLength:
-                    receiveBuffer(resultsAux)
-                    resultsAux = []
-
-                if tweetCriteria.maxTweets > 0 and counter >= tweetCriteria.maxTweets:
-                    active = False
-                    break
+            if tweetCriteria.maxTweets > 0 and counter >= tweetCriteria.maxTweets:
+                active = False
+                break
 
         if receiveBuffer and len(resultsAux) > 0:
+            output_counter += len(resultsAux)
             receiveBuffer(resultsAux)
+            print(month + " {} Tweets saved on file..".format(output_counter))
 
-        print("We already download {0} tweets, and the ID of last Tweets is {1}".format(counter, tweet.id))
-        return True\
+        print("We already download {0} tweets on" + month + ", and the ID of last Tweets is {1}".format(counter, tweet.id))
+        return True
 
-    @staticmethod
-    def getJsonReponse(tweetCriteria, refreshCursor, cookieJar):
-        url = "https://twitter.com/i/search/timeline?f=realtime&q=%s&src=typd&%smax_position=%s"
+    # @staticmethod
+    def generateUrl(self, tweetCriteria):
 
         urlGetData = ''
         if hasattr(tweetCriteria, 'username'):
@@ -146,8 +120,14 @@ class TweetManager:
             urlLang = 'lang=' + tweetCriteria.lang + '&'
         else:
             urlLang = ''
-        url = url % (urllib.parse.quote(urlGetData), urlLang, refreshCursor)
-        #print(url)
+
+        return [urlGetData, urlLang]
+
+    # @staticmethod
+    def getJsonReponse(self, urlInfo, refreshCursor, cookieJar, month):
+        url = "https://twitter.com/i/search/timeline?f=realtime&q=%s&src=typd&%smax_position=%s"
+
+        url = url % (urllib.parse.quote(urlInfo[0]), urlInfo[1], refreshCursor)
 
         headers = [
             ('Host', "twitter.com"),
@@ -163,14 +143,26 @@ class TweetManager:
         opener.addheaders = headers
 
         try:
+            time.sleep(1)
             response = opener.open(url)
             jsonResponse = response.read()
-        except:
-            print("Twitter weird response. Try to see on browser: ", url)
-            print("Twitter weird response. Try to see on browser: https://twitter.com/search?q=%s&src=typd" % urllib.parse.quote(urlGetData))
-            print("Unexpected error:", sys.exc_info()[0])
+        except urllib.error.HTTPError as inf:
+
+            f = open(month + '.txt', '+w')
+            f.write(refreshCursor)
+            f.flush()
+            f.close()
+            print(inf.reason)
             sys.exit()
-
-        dataJson = json.loads(jsonResponse.decode())
-
-        return dataJson
+        except Exception as inf:
+            print(month + " Twitter weird response. Try to see on browser: ", url)
+            print(month + " Twitter weird response. Try to see on browser: https://twitter.com/search?q=%s&src=typd" % urllib.parse.quote(urlInfo[0]))
+            print(month + " Unexpected error:", sys.exc_info()[0])
+            f = open(month + '.txt', '+w')
+            f.write(refreshCursor)
+            f.flush()
+            f.close()
+            sys.exit()
+        else:
+            dataJson = json.loads(jsonResponse.decode())
+            return dataJson
