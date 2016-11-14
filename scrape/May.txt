@@ -1,0 +1,1 @@
+{"until": "2016-06-01", "lang": "en", "topTweets": true, "querysearch": "Brexit", "month": "May", "since": "2016-05-01", "refreshCursor": ""}
