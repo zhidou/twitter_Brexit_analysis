@@ -10,7 +10,9 @@ def setcriteria(criteria, tweetCriteria):
     tweetCriteria.lang = criteria['lang']
     tweetCriteria.refreshCursor = criteria['refreshCursor']
     tweetCriteria.month = criteria['month']
+    tweetCriteria.num = criteria['num']
     tweetCriteria.dic = criteria
+
 
 
 def scrape(criteria):

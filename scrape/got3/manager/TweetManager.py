@@ -63,7 +63,7 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
     month = tweetCriteria.month
     refreshCursor = tweetCriteria.refreshCursor
 
-    total_counter = 0
+    total_counter = tweetCriteria.num
     output_counter = 0
     resultsAux = []
     cookieJar = http.cookiejar.CookieJar()
@@ -138,12 +138,14 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
                 break
     except KeyboardInterrupt:
         tweetCriteria.dic['refreshCursor'] = refreshCursor
+        tweetCriteria.dic['num'] = total_counter
         with open(month + '.txt', '+w') as f:
             JSON.dump(tweetCriteria.dic, f)
         raise KeyboardInterrupt
     except Exception as inst:
         print(inst.args[0])
         tweetCriteria.dic['refreshCursor'] = refreshCursor
+        tweetCriteria.dic['num'] = total_counter
         with open(month + '.txt', '+w') as f:
             JSON.dump(tweetCriteria.dic, f)
         raise Exception(inst)
