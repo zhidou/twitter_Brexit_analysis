@@ -3,15 +3,17 @@ from scrape import scrape
 import os, json, time
 
 def load_data(data):
-    criteria = {}
+    criteria = []
     currentPath = os.getcwd()
     for month in data:
         fname = month + '.txt'
+        dic={}
         if os.path.isfile(os.path.join(currentPath, fname)):
             with open(fname, 'r') as f:
                 ss = json.load(f)
                 for keys in ss.keys():
-                    criteria[keys] = ss[keys]
+                    dic[keys] = ss[keys]
+                criteria.append(dic)
         else:
             print("No data exist!!")
             return {}
@@ -89,5 +91,7 @@ if __name__ == '__main__':
     data1 = [dic1]
     data2 = [dic1, dic2]
     beginT = time.time()
-    main(data1)
+    data3 = ['May1', 'May2']
+    main(data3,resume=True)
+
     print("Tollay running time: {}".format(time.time() - beginT))

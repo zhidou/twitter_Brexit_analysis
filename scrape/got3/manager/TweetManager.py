@@ -137,11 +137,13 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
                 active = False
                 break
     except KeyboardInterrupt:
+        tweetCriteria.dic['refreshCursor'] = refreshCursor
         with open(month + '.txt', '+w') as f:
             JSON.dump(tweetCriteria.dic, f)
         raise KeyboardInterrupt
     except Exception as inst:
         print(inst.args[0])
+        tweetCriteria.dic['refreshCursor'] = refreshCursor
         with open(month + '.txt', '+w') as f:
             JSON.dump(tweetCriteria.dic, f)
         raise Exception(inst)
