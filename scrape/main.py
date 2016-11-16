@@ -1,26 +1,7 @@
 from multiprocessing import Pool
 from scrape import scrape
-import os, json, time
-
-def load_data(data):
-    criteria = []
-    currentPath = os.getcwd()
-    for month in data:
-        fname = month + '.txt'
-        dic={}
-        if os.path.isfile(os.path.join(currentPath, fname)):
-            with open(fname, 'r') as f:
-                ss = json.load(f)
-                for keys in ss.keys():
-                    dic[keys] = ss[keys]
-                criteria.append(dic)
-        else:
-            print("No data exist!!")
-            return {}
-    return criteria
-
-
-
+from helper import load_data
+import time
 
 def main(data, resume=False):
     if type(data) == list and resume:
@@ -34,9 +15,12 @@ def main(data, resume=False):
             else:
                 pool = Pool(processes=len(data))
                 pool.map(scrape, data)
-                pool.join()
                 pool.close()
+                pool.join()
         except KeyboardInterrupt:
+            if len(data) > 1:
+                pool.close()
+                pool.join()
             choice = input("Do you want to continue? (Y/N)")
             if choice == 'N': break
             elif choice == 'Y':
@@ -45,18 +29,6 @@ def main(data, resume=False):
                 pass
             else:
                 print("exit main function")
-                break
-        except Exception as inst:
-            print("Error happens!!!")
-            if retry < 3:
-                print("sleep 300s and retry!")
-                time.sleep(300)
-                month = [x['month'] for x in data]
-                load_data(month)
-                retry += 1
-                pass
-            else:
-                print("fail!!!!")
                 break
         else:
             print("We successfully scrape {} month data!!!".format(len(data)))

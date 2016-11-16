@@ -6,6 +6,13 @@ import time
 import json as JSON
 import numpy as np
 
+def interruptHandler(error, tweetCriteria , refreshCursor, total_counter):
+    if len(error.args) > 0:
+        print(error.args[0])
+    tweetCriteria.dic['refreshCursor'] = refreshCursor
+    tweetCriteria.dic['num'] = total_counter
+    with open(tweetCriteria.month + '.txt', '+w') as f:
+        JSON.dump(tweetCriteria.dic, f)
 
 def generateUrl(tweetCriteria):
 
@@ -136,18 +143,11 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
             if tweetCriteria.maxTweets > 0 and total_counter >= tweetCriteria.maxTweets:
                 active = False
                 break
-    except KeyboardInterrupt:
-        tweetCriteria.dic['refreshCursor'] = refreshCursor
-        tweetCriteria.dic['num'] = total_counter
-        with open(month + '.txt', '+w') as f:
-            JSON.dump(tweetCriteria.dic, f)
+    except KeyboardInterrupt as inst:
+        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter)
         raise KeyboardInterrupt
     except Exception as inst:
-        print(inst.args[0])
-        tweetCriteria.dic['refreshCursor'] = refreshCursor
-        tweetCriteria.dic['num'] = total_counter
-        with open(month + '.txt', '+w') as f:
-            JSON.dump(tweetCriteria.dic, f)
+        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter)
         raise Exception(inst)
     else:
         print("We successfully download {0} tweets on".format(total_counter+len(resultsAux)) + month)

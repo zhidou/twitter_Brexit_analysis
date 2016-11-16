@@ -1,6 +1,6 @@
 import csv, time
 import got3 as got
-
+from helper import load_data
 
 def setcriteria(criteria, tweetCriteria):
     tweetCriteria.since = criteria['since']
@@ -20,25 +20,41 @@ def scrape(criteria):
     tweetCriteria = got.manager.TweetCriteria()
     setcriteria(criteria, tweetCriteria)
     print("Begin to scrape data from " + tweetCriteria.month)
-    try:
-        outputFile = open("Tweets" + tweetCriteria.month + ".csv", "+a")
-        writer = csv.writer(outputFile)
-        writer.writerow(['user_id', 'time', 'geo', 'polarity', 'subjectivity', 'wordnouns', 'hashtags'])
-        print('Downloading data of ' + tweetCriteria.month + '...')
+    Error_time = 0
+    while True:
+        try:
+            outputFile = open("Tweets" + tweetCriteria.month + ".csv", "+a")
+            writer = csv.writer(outputFile)
+            writer.writerow(['user_id', 'time', 'geo', 'polarity', 'subjectivity', 'wordnouns', 'hashtags'])
+            print('Downloading data of ' + tweetCriteria.month + '...')
 
-        def receiveBuffer(tweets):
-            for t in tweets:
-                writer.writerow([t.user_id, t.date.strftime("%Y-%m-%d %H:%M"), t.geo,
-                                 t.polarity, t.subjectivity, t.wordnouns,t.hashtags])
-            outputFile.flush()
+            def receiveBuffer(tweets):
+                for t in tweets:
+                    writer.writerow([t.user_id, t.date.strftime("%Y-%m-%d %H:%M"), t.geo,
+                                     t.polarity, t.subjectivity, t.wordnouns,t.hashtags])
+                outputFile.flush()
 
-        got.manager.getTweets(tweetCriteria, receiveBuffer)
-    except Exception as inst:
-        print(inst.args[0])
-        print(tweetCriteria.month + ' Error happens! Arguments parser error:' + str(inst.args))
-        raise Exception(inst)
-    else:
-        print('Data of' + tweetCriteria.month + ' has completely downloaded!!')
-    finally:
-        outputFile.close()
-        print('Running time: {}'.format(time.time() - beginTime))
+            got.manager.getTweets(tweetCriteria, receiveBuffer)
+        except KeyboardInterrupt:
+            print('KeyboardInterrupt stop ' + criteria['month'])
+            raise KeyboardInterrupt
+        except Exception as inst:
+            if len(inst.args) > 0:
+                print(inst.args[0])
+            print(tweetCriteria.month + ' Error happens! Arguments parser error:' + str(inst.args))
+            if Error_time < 3:
+                print("sleep 300s and retry!")
+                time.sleep(300)
+                month = [x['month'] for x in criteria]
+                criteria = load_data(month)
+                Error_time += 1
+                pass
+            else:
+                print("fail!!!!")
+                raise Exception(inst)
+        else:
+            print('Data of ' + tweetCriteria.month + ' has completely downloaded!!')
+        finally:
+            outputFile.close()
+            print('Running time: {}'.format(time.time() - beginTime))
+
