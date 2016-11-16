@@ -1,13 +1,12 @@
 from multiprocessing import Pool
-from scrape import scrape
-from helper import load_data
+from .scrape import scrape
+from .helper import load_data, interrupt_handler_main
 import time
 
 def main(data, resume=False):
     if type(data) == list and resume:
         data = load_data(data)
 
-    retry = 0
     while True:
         try:
             if len(data) == 1:
@@ -18,18 +17,17 @@ def main(data, resume=False):
                 pool.close()
                 pool.join()
         except KeyboardInterrupt:
-            if len(data) > 1:
-                pool.close()
-                pool.join()
-            choice = input("Do you want to continue? (Y/N)")
-            if choice == 'N': break
-            elif choice == 'Y':
-                month = [x['month'] for x in data]
-                load_data(month)
+            if interrupt_handler_main(KeyboardInterrupt):
+                month = [x[month] for x in data]
+                data = load_data(month)
                 pass
             else:
-                print("exit main function")
+                print("KeyboardInterrupt!!")
                 break
+        except Exception as inst:
+            interrupt_handler_main(inst, pool)
+            print("Error!!")
+            raise
         else:
             print("We successfully scrape {} month data!!!".format(len(data)))
 

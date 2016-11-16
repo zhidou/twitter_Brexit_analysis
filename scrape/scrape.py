@@ -1,6 +1,6 @@
 import csv, time
-import got3 as got
-from helper import load_data
+from .got3 import manager
+from .helper import load_data
 
 def setcriteria(criteria, tweetCriteria):
     tweetCriteria.since = criteria['since']
@@ -17,7 +17,7 @@ def setcriteria(criteria, tweetCriteria):
 
 def scrape(criteria):
     beginTime = time.time()
-    tweetCriteria = got.manager.TweetCriteria()
+    tweetCriteria = manager.TweetCriteria()
     setcriteria(criteria, tweetCriteria)
     print("Begin to scrape data from " + tweetCriteria.month)
     Error_time = 0
@@ -34,7 +34,7 @@ def scrape(criteria):
                                      t.polarity, t.subjectivity, t.wordnouns,t.hashtags])
                 outputFile.flush()
 
-            got.manager.getTweets(tweetCriteria, receiveBuffer)
+            manager.getTweets(tweetCriteria, receiveBuffer)
         except KeyboardInterrupt:
             print('KeyboardInterrupt stop ' + criteria['month'])
             raise KeyboardInterrupt

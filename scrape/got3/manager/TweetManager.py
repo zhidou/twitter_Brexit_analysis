@@ -1,18 +1,10 @@
 import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error,urllib.parse,json,re,datetime,sys,http.cookiejar
 from textblob import TextBlob
-from got3 import models
+from ...got3 import models
 from pyquery import PyQuery
 import time
-import json as JSON
 import numpy as np
-
-def interruptHandler(error, tweetCriteria , refreshCursor, total_counter):
-    if len(error.args) > 0:
-        print(error.args[0])
-    tweetCriteria.dic['refreshCursor'] = refreshCursor
-    tweetCriteria.dic['num'] = total_counter
-    with open(tweetCriteria.month + '.txt', '+w') as f:
-        JSON.dump(tweetCriteria.dic, f)
+from ...helper import interruptHandler
 
 def generateUrl(tweetCriteria):
 
