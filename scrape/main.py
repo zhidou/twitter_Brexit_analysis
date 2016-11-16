@@ -64,9 +64,9 @@ if __name__ == '__main__':
     dic3['num'] = 0
 
     data1 = [dic1]
-    data2 = [dic1, dic2, dic3]
+    data2 = [dic1, dic2]
     beginT = time.time()
     # data3 = ['May1', 'May2']
-    main(data1)
+    main(data2)
 
     print("Tollay running time: {}".format(time.time() - beginT))
