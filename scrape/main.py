@@ -1,6 +1,6 @@
 from multiprocessing import Pool
-from .scrape import scrape
-from .helper import load_data, interrupt_handler_main
+from scrape import scrape
+from helper import load_data, interrupt_handler_main
 import time
 
 def main(data, resume=False):
@@ -18,7 +18,7 @@ def main(data, resume=False):
                 pool.join()
         except KeyboardInterrupt:
             if interrupt_handler_main(KeyboardInterrupt):
-                month = [x[month] for x in data]
+                month = [x['month'] for x in data]
                 data = load_data(month)
                 pass
             else:
@@ -63,10 +63,10 @@ if __name__ == '__main__':
     dic3['month'] = 'July3'
     dic3['num'] = 0
 
-    # data1 = [dic1]
+    data1 = [dic1]
     data2 = [dic1, dic2, dic3]
     beginT = time.time()
     # data3 = ['May1', 'May2']
-    main(data2)
+    main(data1)
 
     print("Tollay running time: {}".format(time.time() - beginT))

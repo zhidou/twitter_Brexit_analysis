@@ -1,10 +1,10 @@
 import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error,urllib.parse,json,re,datetime,sys,http.cookiejar
 from textblob import TextBlob
-from ...got3 import models
+import got3 as got
 from pyquery import PyQuery
 import time
 import numpy as np
-from ...helper import interruptHandler
+from helper import interruptHandler
 
 def generateUrl(tweetCriteria):
 
@@ -86,7 +86,7 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
             tweetHTML = tweets[np.random.randint(0, len(tweets))]
 
             tweetPQ = PyQuery(tweetHTML)
-            tweet = models.Tweet()
+            tweet = got.models.Tweet()
 
             # process text
             txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
@@ -147,4 +147,5 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
         if receiveBuffer and len(resultsAux) > 0:
             output_counter += len(resultsAux)
             receiveBuffer(resultsAux)
+    return
 
