@@ -20,20 +20,21 @@ def scrape(criteria):
     tweetCriteria = manager.TweetCriteria()
     setcriteria(criteria, tweetCriteria)
     print("Begin to scrape data from " + tweetCriteria.month)
+
+    outputFile = open("Tweets" + tweetCriteria.month + ".csv", "+a")
+    writer = csv.writer(outputFile)
+    writer.writerow(['user_id', 'time', 'geo', 'polarity', 'subjectivity', 'wordnouns', 'hashtags'])
+    print('Downloading data of ' + tweetCriteria.month + '...')
+
+    def receiveBuffer(tweets):
+        for t in tweets:
+            writer.writerow([t.user_id, t.date.strftime("%Y-%m-%d %H:%M"), t.geo,
+                             t.polarity, t.subjectivity, t.wordnouns, t.hashtags])
+        outputFile.flush()
+
     Error_time = 0
     while True:
         try:
-            outputFile = open("Tweets" + tweetCriteria.month + ".csv", "+a")
-            writer = csv.writer(outputFile)
-            writer.writerow(['user_id', 'time', 'geo', 'polarity', 'subjectivity', 'wordnouns', 'hashtags'])
-            print('Downloading data of ' + tweetCriteria.month + '...')
-
-            def receiveBuffer(tweets):
-                for t in tweets:
-                    writer.writerow([t.user_id, t.date.strftime("%Y-%m-%d %H:%M"), t.geo,
-                                     t.polarity, t.subjectivity, t.wordnouns,t.hashtags])
-                outputFile.flush()
-
             manager.getTweets(tweetCriteria, receiveBuffer)
         except KeyboardInterrupt:
             print('KeyboardInterrupt stop ' + criteria['month'])
@@ -54,7 +55,9 @@ def scrape(criteria):
                 raise Exception(inst)
         else:
             print('Data of ' + tweetCriteria.month + ' has completely downloaded!!')
+            break
         finally:
             outputFile.close()
             print('Running time: {}'.format(time.time() - beginTime))
+    return
 
