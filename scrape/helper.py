@@ -19,11 +19,7 @@ def load_data(data):
     return criteria
 
 
-<<<<<<< HEAD
 def interrupt_handler_main(excep, pool=[]):
-=======
-def interrupt_handler_main(excep, pool = []):
->>>>>>> e25ab4dfd22d84c16f64a5d50f3ddcb6152cbca1
     if pool:
         pool.close()
         pool.join()

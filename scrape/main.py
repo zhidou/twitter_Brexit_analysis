@@ -6,11 +6,7 @@ import time
 def main(data, resume=False):
     if type(data) == list and resume:
         data = load_data(data)
-<<<<<<< HEAD
     pool=[]
-=======
-
->>>>>>> e25ab4dfd22d84c16f64a5d50f3ddcb6152cbca1
     while True:
         try:
             if len(data) == 1:
@@ -22,11 +18,7 @@ def main(data, resume=False):
                 pool.close()
                 pool.join()
         except KeyboardInterrupt:
-<<<<<<< HEAD
             if interrupt_handler_main(KeyboardInterrupt, pool):
-=======
-            if interrupt_handler_main(KeyboardInterrupt):
->>>>>>> e25ab4dfd22d84c16f64a5d50f3ddcb6152cbca1
                 month = [x['month'] for x in data]
                 data = load_data(month)
                 pass
@@ -73,11 +65,7 @@ if __name__ == '__main__':
     dic3['num'] = 0
 
     data1 = [dic1]
-<<<<<<< HEAD
     data2 = [dic1, dic2, dic3]
-=======
-    data2 = [dic1, dic2]
->>>>>>> e25ab4dfd22d84c16f64a5d50f3ddcb6152cbca1
     beginT = time.time()
     # data3 = ['May1', 'May2']
     main(data1)
