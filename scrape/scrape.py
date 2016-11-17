@@ -33,6 +33,8 @@ def scrape(criteria):
 
     Error_time = 0
     while True:
+        if outputFile.closed:
+            outputFile = open("Tweets" + tweetCriteria.month + ".csv", "+a")
         try:
             got.manager.getTweets(tweetCriteria, receiveBuffer)
         except KeyboardInterrupt:

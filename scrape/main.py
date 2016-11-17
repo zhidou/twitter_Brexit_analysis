@@ -31,6 +31,7 @@ def main(data, resume=False):
             raise
         else:
             print("We successfully scrape {} month data!!!".format(len(data)))
+            break
 
 
 if __name__ == '__main__':
