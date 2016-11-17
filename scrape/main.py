@@ -1,63 +1,34 @@
 from multiprocessing import Pool
 from scrape import scrape
-import os, json, time
-
-def load_data(data):
-    criteria = []
-    currentPath = os.getcwd()
-    for month in data:
-        fname = month + '.txt'
-        dic={}
-        if os.path.isfile(os.path.join(currentPath, fname)):
-            with open(fname, 'r') as f:
-                ss = json.load(f)
-                for keys in ss.keys():
-                    dic[keys] = ss[keys]
-                criteria.append(dic)
-        else:
-            print("No data exist!!")
-            return {}
-    return criteria
-
-
-
+from helper import load_data, interrupt_handler_main
+import time
 
 def main(data, resume=False):
     if type(data) == list and resume:
         data = load_data(data)
-
-    retry = 0
+    pool=[]
     while True:
         try:
             if len(data) == 1:
                 scrape(data[0])
             else:
+                for x in data: x['pid'] = -1
                 pool = Pool(processes=len(data))
                 pool.map(scrape, data)
-                pool.join()
                 pool.close()
+                pool.join()
         except KeyboardInterrupt:
-            choice = input("Do you want to continue? (Y/N)")
-            if choice == 'N': break
-            elif choice == 'Y':
+            if interrupt_handler_main(KeyboardInterrupt, pool):
                 month = [x['month'] for x in data]
-                load_data(month)
+                data = load_data(month)
                 pass
             else:
-                print("exit main function")
+                print("KeyboardInterrupt!!")
                 break
         except Exception as inst:
-            print("Error happens!!!")
-            if retry < 3:
-                print("sleep 300s and retry!")
-                time.sleep(300)
-                month = [x['month'] for x in data]
-                load_data(month)
-                retry += 1
-                pass
-            else:
-                print("fail!!!!")
-                break
+            interrupt_handler_main(inst, pool)
+            print("Error!!")
+            raise
         else:
             print("We successfully scrape {} month data!!!".format(len(data)))
 
@@ -93,10 +64,10 @@ if __name__ == '__main__':
     dic3['month'] = 'July3'
     dic3['num'] = 0
 
-    # data1 = [dic1]
+    data1 = [dic1]
     data2 = [dic1, dic2, dic3]
     beginT = time.time()
     # data3 = ['May1', 'May2']
-    main(data2)
+    main(data1)
 
     print("Tollay running time: {}".format(time.time() - beginT))
