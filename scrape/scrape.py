@@ -42,14 +42,13 @@ def scrape(criteria):
             if not criteria.get('pid'):
                 raise KeyboardInterrupt
             break
-
         except Exception as inst:
             if len(inst.args) > 0:
                 print(inst.args[0])
             print(tweetCriteria.month + ' Error happens! Arguments parser error:' + str(inst.args))
             if Error_time < 3:
                 print("sleep 300s and retry!")
-                time.sleep(3)
+                time.sleep(300)
                 criteria = load_data([criteria['month']])[0]
                 tweetCriteria.refreshCursor = criteria['refreshCursor']
                 Error_time += 1
