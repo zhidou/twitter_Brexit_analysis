@@ -49,9 +49,9 @@ def scrape(criteria):
             print(tweetCriteria.month + ' Error happens! Arguments parser error:' + str(inst.args))
             if Error_time < 3:
                 print("sleep 300s and retry!")
-                time.sleep(300)
-                month = [x['month'] for x in criteria]
-                criteria = load_data(month)
+                time.sleep(3)
+                criteria = load_data([criteria['month']])[0]
+                tweetCriteria.refreshCursor = criteria['refreshCursor']
                 Error_time += 1
                 pass
             else:
@@ -64,6 +64,6 @@ def scrape(criteria):
             break
         finally:
             outputFile.close()
-            print('Running time: {}'.format(time.time() - beginTime))
+            print(tweetCriteria.month + 'Running time: {}'.format(time.time() - beginTime))
     return
 

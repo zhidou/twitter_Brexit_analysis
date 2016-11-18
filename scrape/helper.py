@@ -15,7 +15,7 @@ def load_data(data):
                 criteria.append(dic)
         else:
             print("No data exist!!")
-            return {}
+            return []
     return criteria
 
 
