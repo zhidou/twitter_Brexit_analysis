@@ -1,0 +1,9 @@
+1. do logistic regressio
+   the goal of this step is to set every tweets a attitude leave or stay
+   The independent variable: polarity and subjectivity  
+   (1)If in the wordnouns or hashtags contains leave or
+
+
+
+remain : stay, left wing, 
+leave: right wing 
