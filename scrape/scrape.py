@@ -18,6 +18,8 @@ def setcriteria(criteria, tweetCriteria):
 
 def scrape(criteria):
     beginTime = time.time()
+    time_threshold = 60 * 60
+    lastBrokenTime = beginTime
     tweetCriteria = got.manager.TweetCriteria()
     setcriteria(criteria, tweetCriteria)
     print("Begin to scrape data from " + tweetCriteria.month)
@@ -41,7 +43,7 @@ def scrape(criteria):
             got.manager.getTweets(tweetCriteria, receiveBuffer)
         except KeyboardInterrupt:
             print('KeyboardInterrupt stop ' + criteria['month'])
-            if not criteria.get('pid'):
+            if criteria.get('pid') == 0:
                 raise KeyboardInterrupt
             break
         except Exception as inst:
@@ -53,11 +55,13 @@ def scrape(criteria):
                 time.sleep(300)
                 criteria = load_data([criteria['month']])[0]
                 tweetCriteria.refreshCursor = criteria['refreshCursor']
-                Error_time += 1
+                if time.time() - lastBrokenTime < time_threshold:
+                    Error_time += 1
+                lastBrokenTime = time.time()
                 pass
             else:
                 print("reconnect 3 times, but still fail " + tweetCriteria.month)
-                if not criteria.get('pid'):
+                if criteria.get('pid') == 0:
                     raise Exception(inst)
                 break
         else:

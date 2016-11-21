@@ -10,6 +10,7 @@ def main(data, resume=False):
     while True:
         try:
             if len(data) == 1:
+                data[0]['pid'] = 0
                 scrape(data[0])
             else:
                 for x in data: x['pid'] = -1
@@ -68,7 +69,7 @@ if __name__ == '__main__':
     data1 = [dic1]
     data2 = [dic1, dic2, dic3]
     beginT = time.time()
-    # data3 = ['May1', 'May2']
-    main(data1)
+    data3 = ['June3']
+    main(data3, True)
 
     print("Tollay running time: {}".format(time.time() - beginT))

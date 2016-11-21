@@ -34,5 +34,5 @@ def interruptHandler(error, tweetCriteria , refreshCursor, total_counter):
         print(error.args[0])
     tweetCriteria.dic['refreshCursor'] = refreshCursor
     tweetCriteria.dic['num'] = total_counter
-    with open(tweetCriteria.month + '.txt', '+w') as f:
+    with open(tweetCriteria.month + '.txt', 'w+') as f:
         json.dump(tweetCriteria.dic, f)
