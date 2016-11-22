@@ -25,12 +25,12 @@ def scrape(criteria):
     print("Begin to scrape data from " + tweetCriteria.month)
     outputFile = open("Tweets" + tweetCriteria.month + ".csv", "+a")
     writer = csv.writer(outputFile)
-    writer.writerow(['user_id', 'time', 'geo', 'polarity', 'subjectivity', 'wordnouns', 'hashtags'])
+    writer.writerow(['tweet_id','user_id', 'time', 'geo', 'location', 'text', 'hashtags'])
     print('Downloading data of ' + tweetCriteria.month + '...')
     def receiveBuffer(tweets):
         for t in tweets:
-            writer.writerow([t.user_id, t.date.strftime("%Y-%m-%d %H:%M"), t.geo,
-                             t.polarity, t.subjectivity, t.wordnouns, t.hashtags])
+            writer.writerow([t.id, t.user_id, t.date.strftime("%Y-%m-%d %H:%M"), t.geo,
+                             t.location, t.text, t.hashtags])
         outputFile.flush()
 
     Error_time = 0
