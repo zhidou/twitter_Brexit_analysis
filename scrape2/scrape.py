@@ -54,7 +54,7 @@ def scrape(criteria):
                 print("sleep 300s and retry!")
                 time.sleep(300)
                 criteria = load_data([criteria['month']])[0]
-                tweetCriteria.refreshCursor = criteria['refreshCursor']
+                setcriteria(criteria, tweetCriteria)
                 if time.time() - lastBrokenTime < time_threshold:
                     Error_time += 1
                 lastBrokenTime = time.time()
