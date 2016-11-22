@@ -1,0 +1,90 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+% \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading nips_2016
+%
+% to avoid loading the natbib package, add option nonatbib:
+% \usepackage[nonatbib]{nips_2016}
+
+%\usepackage{nips_2016}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+\usepackage[final]{nips_2016}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+%\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+\title{Twitter Sentiment Analysis of the Brexit result}
+
+
+
+\author{
+    Surya Vajjhala \\
+    U19590925\\
+    \texttt{Email} vajjhala@bu.edu\\
+     \And
+    Zhi Dou \\
+    U21392913 \\
+    \texttt{Email} zhidou@bu.edu\\
+}
+
+\begin{document}
+% \nipsfinalcopy is no longer used
+
+\maketitle
+
+\section*{Nature of the Dataset}
+We dataset consists of tweets, from Jan 1, 2016 to Oct 1, 2016
+
+\subsection*{\textit{\textbf{Collection:}}}
+We scrape data with tag \#Brexit using Twitter API 
+\subsection*{\textit{\textbf{Format:}}} Twitter API provides the data in JSON format. These data also called tweets are the basic atomic building block of all things in Twitter. It contains keys like: \lq text\rq, \lq retweeted\_status\rq, \lq favorite\_count\rq, \lq metadata\rq, \lq user\rq, \lq created\_at\rq, \lq source\rq, \lq retweeted\rq, \lq coordinates\rq, \lq possibly\_sensitive\rq, \lq truncated\rq, \lq contributors\rq, \lq is\_quote\_status\rq, \lq id\rq, \lq retweet\_count\rq, \lq lang\rq, \lq place\rq , \lq entities\rq , \lq favorited\rq.	
+
+\par For our project, the keys we may need are \lq text\rq, \lq location\rq, \lq lang\rq          (language) , \lq created\_at\rq (time the tweet was posted).
+
+\subsection*{\textit{\textbf{Preprocess:}}} Because the data got from API has more information than we need, we should parse out the raw data extract the attributes we would use and save it into cvs file for later usage.
+
+
+\section*{Expected Analysis}
+
+\subsection* {\textit{\textbf{Latent Semantic Analysis}}}
+
+\par In order to get information from each tweet, we should do latent semantic analysis on the texts , to break texts into words, to remove meaningless high frequency words, and to reduce the dimension we may need for further step.
+
+\subsection*{\textit{\textbf{Sentiment Analysis}}}
+\par To get the attitude of each user towards Brexit, we should implement sentiment analysis on each tweet.
+
+\subsection*{\textit{\textbf{Clustering}}}
+\par We would cluster the data based the general opinion and location by using  K-means and GMM clustering techniques.
+
+\section*{Application}
+\par Based on our work, we could analysis the trends in the Brexit vote. We could answer questions like below:
+\begin{enumerate}
+\item Prediction of the Brexit vote based on twitter data.
+\item Does UK regret the Brexit?
+\item General opinion of others nations (more specifically other countries of EU) towards the result of the referendum.
+\item A timeline of variation of public opinion leading up to the vote.
+\item Demographic insights of the Brexit vote.
+\end{enumerate}
+
+We could get the answer for most of these questions, after we perform sentiment analysis on the data. And through our analysis, we could see the big picture and trends on Brexit.
+
+\section*{Expected Results}
+
+\begin{enumerate}
+\item We might validate that Twitter could have correctly predicted the Brexit vote result.
+\item We expect that there is a large population that regrets the result of the voting (based on the tweets after the result).
+\item We cannot make assumptions until we analyse the tweets from each country.
+\item Show a plot of changing variation of people's opinion and try to correlate it to teh major socio-political events ( like the immigration crisis, bombing in Paris, 2015 UK general election, Greek bailout referendum, etc.).
+\item Remain camps clustered around major cities and Leave camps around the rural and country side.
+
+\end{enumerate}
+
+\end{document}

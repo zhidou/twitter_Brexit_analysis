@@ -6,7 +6,7 @@ def load_data(data):
     criteria = []
     currentPath = os.getcwd()
     for month in data:
-        fname = month + '.txt'
+        fname = month['month'] + '.txt'
         dic={}
         if os.path.isfile(os.path.join(currentPath, fname)):
             with open(fname, 'r') as f:
@@ -63,35 +63,37 @@ def main(data, resume=False):
 
 
 if __name__ == '__main__':
-    dic1={}
-    dic2={}
-    dic3={}
-    dic1['querysearch'] = 'Brexit'
-    dic1['since'] = '2016-05-01'
-    dic1['until'] = '2016-06-01'
-    dic1['topTweets'] = True
-    dic1['lang'] = 'en'
-    dic1['refreshCursor'] = ''
-    dic1['month'] = 'May'
+	dic1={}
+	dic2={}
+	dic3={}
+	dic1['querysearch'] = 'Brexit'
+	dic1['since'] = '2016-05-01'
+	dic1['until'] = '2016-05-10'
+	dic1['topTweets'] = True
+	dic1['lang'] = 'en'
+	dic1['refreshCursor'] = ''
+	dic1['month'] = 'May1'
 
-    dic2['querysearch'] = 'Brexit'
-    dic2['since'] = '2016-07-01'
-    dic2['until'] = '2016-08-01'
-    dic2['topTweets'] = True
-    dic2['lang'] = 'en'
-    dic2['refreshCursor'] = ''
-    dic2['month'] = 'July'
-    # dic3['querysearch'] = 'Brexit'
-    # dic3['since'] = '2016-08-01'
-    # dic3['until'] = '2016-09-01'
-    # dic3['topTweets'] = True
-    # dic3['lang'] = 'en'
-    # dic3['refreshCursor'] = ''
+	dic2['querysearch'] = 'Brexit'
+	dic2['since'] = '2016-05-11'
+	dic2['until'] = '2016-05-20'
+	dic2['topTweets'] = True
+	dic2['lang'] = 'en'
+	dic2['refreshCursor'] = ''
+	dic2['month'] = 'May2'
 
-    data1 = [dic1]
-    data2 = [dic1, dic2]
-    beginT = time.time()
-    data3 = ['May1', 'May2']
-    main(data3,resume=True)
+	dic3['querysearch'] = 'Brexit'
+	dic3['since'] = '2016-05-20'
+	dic3['until'] = '2016-05-31'
+	dic3['topTweets'] = True
+	dic3['lang'] = 'en'
+	dic3['refreshCursor'] = ''
+	dic3['month'] = 'May3'
 
-    print("Tollay running time: {}".format(time.time() - beginT))
+	data1 = [dic1]
+	data2 = [dic1, dic2]
+	beginT = time.time()
+	data3 = [dic1,dic2,dic3]
+	main(data3, resume = True)
+
+	print("Tollay running time: {}".format(time.time() - beginT))
