@@ -136,13 +136,13 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
                 active = False
                 break
     except KeyboardInterrupt as inst:
-        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter+len(resultsAux))
+        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter)
         raise KeyboardInterrupt
     except Exception as inst:
-        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter+len(resultsAux))
+        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter)
         raise Exception(inst)
     else:
-        print("We successfully download {0} tweets on".format(total_counter+len(resultsAux)) + month)
+        print("We successfully download {0} tweets on".format(total_counter) + month)
     finally:
         if receiveBuffer and len(resultsAux) > 0:
             output_counter += len(resultsAux)

@@ -1,9 +1,19 @@
-1. do logistic regressio
+1. do logistic regression
    the goal of this step is to set every tweets a attitude leave or stay
-   The independent variable: polarity and subjectivity  
-   (1)If in the wordnouns or hashtags contains leave or
 
+   The independent variable: polarity, subjectivity, words nouns, hash tags
+   The dependent variable: Assumption we made, if it contains synonym of contain or leave, we combine with the sentiment, to decide the attitude.
+   (Actually we should analysis the potential error or disadvantage there and the method we use to deal with with this problem, as best as we could)
+   We could use 4 model
+   (We may be need more label.....)
+        (1) logistic regression, which we may choose sm package
+        (2) SVM which we will find some model....
+        (3) Naive Bayes...
+        (4) Multi-perceptron neural network
 
+Now what we should do
+1.  Figure out how to use naive bayes to solve..
+    basically the input and the output..
 
 remain : stay, left wing, 
 leave: right wing 
