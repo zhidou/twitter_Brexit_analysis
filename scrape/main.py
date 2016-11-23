@@ -1,5 +1,6 @@
 from multiprocessing import Pool
 from scrape import scrape
+<<<<<<< HEAD
 import os, json, time
 
 def load_data(data):
@@ -21,48 +22,45 @@ def load_data(data):
 
 
 
+=======
+from helper import load_data, interrupt_handler_main
+import time
+>>>>>>> zhidou
 
 def main(data, resume=False):
     if type(data) == list and resume:
         data = load_data(data)
-
-    retry = 0
+    pool=[]
     while True:
         try:
             if len(data) == 1:
+                data[0]['pid'] = 0
                 scrape(data[0])
             else:
+                for x in data: x['pid'] = -1
                 pool = Pool(processes=len(data))
                 pool.map(scrape, data)
-                pool.join()
                 pool.close()
+                pool.join()
         except KeyboardInterrupt:
-            choice = input("Do you want to continue? (Y/N)")
-            if choice == 'N': break
-            elif choice == 'Y':
+            if interrupt_handler_main(KeyboardInterrupt, pool):
                 month = [x['month'] for x in data]
-                load_data(month)
+                data = load_data(month)
                 pass
             else:
-                print("exit main function")
+                print("KeyboardInterrupt!!")
                 break
         except Exception as inst:
-            print("Error happens!!!")
-            if retry < 3:
-                print("sleep 300s and retry!")
-                time.sleep(300)
-                month = [x['month'] for x in data]
-                load_data(month)
-                retry += 1
-                pass
-            else:
-                print("fail!!!!")
-                break
+            interrupt_handler_main(inst, pool)
+            print("Error!!")
+            raise
         else:
             print("We successfully scrape {} month data!!!".format(len(data)))
+            break
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
 	dic1={}
 	dic2={}
 	dic3={}
@@ -89,6 +87,43 @@ if __name__ == '__main__':
 	dic3['lang'] = 'en'
 	dic3['refreshCursor'] = ''
 	dic3['month'] = 'May3'
+=======
+    dic1={}
+    dic2={}
+    dic3={}
+    dic1['querysearch'] = 'Brexit'
+    dic1['since'] = '2016-07-01'
+    dic1['until'] = '2016-07-11'
+    dic1['topTweets'] = True
+    dic1['lang'] = 'en'
+    dic1['refreshCursor'] = ''
+    dic1['month'] = 'July1'
+    dic1['num'] = 0
+
+    dic2['querysearch'] = 'Brexit'
+    dic2['since'] = '2016-07-11'
+    dic2['until'] = '2016-07-21'
+    dic2['topTweets'] = True
+    dic2['lang'] = 'en'
+    dic2['refreshCursor'] = ''
+    dic2['month'] = 'July2'
+    dic2['num'] = 0
+
+    dic3['querysearch'] = 'Brexit'
+    dic3['since'] = '2016-07-21'
+    dic3['until'] = '2016-08-01'
+    dic3['topTweets'] = True
+    dic3['lang'] = 'en'
+    dic3['refreshCursor'] = ''
+    dic3['month'] = 'July3'
+    dic3['num'] = 0
+
+    data1 = [dic1]
+    data2 = [dic1, dic2, dic3]
+    beginT = time.time()
+    data3 = ['June3']
+    main(data3, True)
+>>>>>>> zhidou
 
 	data1 = [dic1]
 	data2 = [dic1, dic2]

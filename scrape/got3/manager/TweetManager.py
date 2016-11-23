@@ -1,11 +1,10 @@
 import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error,urllib.parse,json,re,datetime,sys,http.cookiejar
 from textblob import TextBlob
-from got3 import models
+import got3 as got
 from pyquery import PyQuery
 import time
-import json as JSON
 import numpy as np
-
+from helper import interruptHandler
 
 def generateUrl(tweetCriteria):
 
@@ -63,7 +62,7 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
     month = tweetCriteria.month
     refreshCursor = tweetCriteria.refreshCursor
 
-    total_counter = 0
+    total_counter = tweetCriteria.num
     output_counter = 0
     resultsAux = []
     cookieJar = http.cookiejar.CookieJar()
@@ -87,7 +86,7 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
             tweetHTML = tweets[np.random.randint(0, len(tweets))]
 
             tweetPQ = PyQuery(tweetHTML)
-            tweet = models.Tweet()
+            tweet = got.models.Tweet()
 
             # process text
             txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
@@ -136,21 +135,17 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
             if tweetCriteria.maxTweets > 0 and total_counter >= tweetCriteria.maxTweets:
                 active = False
                 break
-    except KeyboardInterrupt:
-        tweetCriteria.dic['refreshCursor'] = refreshCursor
-        with open(month + '.txt', '+w') as f:
-            JSON.dump(tweetCriteria.dic, f)
+    except KeyboardInterrupt as inst:
+        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter)
         raise KeyboardInterrupt
     except Exception as inst:
-        print(inst.args[0])
-        tweetCriteria.dic['refreshCursor'] = refreshCursor
-        with open(month + '.txt', '+w') as f:
-            JSON.dump(tweetCriteria.dic, f)
+        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter)
         raise Exception(inst)
     else:
-        print("We successfully download {0} tweets on".format(total_counter+len(resultsAux)) + month)
+        print("We successfully download {0} tweets on".format(total_counter) + month)
     finally:
         if receiveBuffer and len(resultsAux) > 0:
             output_counter += len(resultsAux)
             receiveBuffer(resultsAux)
+    return
 
