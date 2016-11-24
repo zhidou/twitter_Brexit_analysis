@@ -17,20 +17,24 @@ def setcriteria(criteria, tweetCriteria):
 
 
 def scrape(criteria):
+    # set time and re-try time threshold
     beginTime = time.time()
     time_threshold = 60 * 60
     lastBrokenTime = beginTime
+    # initial tweet criteria
     tweetCriteria = got.manager.TweetCriteria()
     setcriteria(criteria, tweetCriteria)
     print("Begin to scrape data from " + tweetCriteria.month)
+    # create or open the file we write into
     outputFile = open("Tweets" + tweetCriteria.month + ".csv", "+a")
     writer = csv.writer(outputFile)
-    writer.writerow(['user_id', 'time', 'geo', 'polarity', 'subjectivity', 'wordnouns', 'hashtags'])
+    writer.writerow(['user_id', 'tweet_id', 'time', 'location', 'polarity', 'subjectivity', 'text',' hashtags'])
     print('Downloading data of ' + tweetCriteria.month + '...')
+
     def receiveBuffer(tweets):
         for t in tweets:
-            writer.writerow([t.user_id, t.date.strftime("%Y-%m-%d %H:%M"), t.geo,
-                             t.polarity, t.subjectivity, t.wordnouns, t.hashtags])
+            writer.writerow([t.user_id, t.tweet_id, t.date.strftime("%Y-%m-%d %H:%M"), t.location,
+                             t.polarity, t.subjectivity, t.text, t.hashtags])
         outputFile.flush()
 
     Error_time = 0
@@ -38,7 +42,7 @@ def scrape(criteria):
         if outputFile.closed:
             outputFile = open("Tweets" + tweetCriteria.month + ".csv", "+a")
             writer = csv.writer(outputFile)
-            print(tweetCriteria.month + 'Restart!')
+            print(tweetCriteria.month + ' Restart!')
         try:
             got.manager.getTweets(tweetCriteria, receiveBuffer)
         except KeyboardInterrupt:
@@ -49,7 +53,7 @@ def scrape(criteria):
         except Exception as inst:
             if len(inst.args) > 0:
                 print(inst.args[0])
-            print(tweetCriteria.month + ' Error happens! Arguments parser error:' + str(inst.args))
+            print(tweetCriteria.month + ' Error happens! Arguments parser error: ' + str(inst.args))
             if Error_time < 3:
                 print("sleep 300s and retry!")
                 time.sleep(300)
@@ -69,6 +73,6 @@ def scrape(criteria):
             break
         finally:
             outputFile.close()
-            print(tweetCriteria.month + 'Running time: {}'.format(time.time() - beginTime))
+            print(tweetCriteria.month + ' Running time: {}'.format(time.time() - beginTime))
     return
 

@@ -39,6 +39,7 @@ if __name__ == '__main__':
     dic1={}
     dic2={}
     dic3={}
+
     dic1['querysearch'] = 'Brexit'
     dic1['since'] = '2016-07-01'
     dic1['until'] = '2016-07-11'
