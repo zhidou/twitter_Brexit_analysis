@@ -1,5 +1,6 @@
 import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error,urllib.parse,json,re,datetime,sys,http.cookiejar
 from textblob import TextBlob
+import tweepy
 import got3 as got
 from pyquery import PyQuery
 import time
@@ -59,6 +60,12 @@ def getJsonReponse(urlInfo, refreshCursor, cookieJar, month):
 
 
 def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
+    # we use the api to get user location
+    consumer_key = 'r7hTS2dvvHkdNabqjv9JEU6zn'
+    consumer_secret = 'jMuCrQPclUkbiMLsjBqOLso7pEKj5M4BMsJxVu8l7pKh7RFIc6'
+    auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
+    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
     month = tweetCriteria.month
     refreshCursor = tweetCriteria.refreshCursor
 
@@ -83,9 +90,12 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
             if len(tweets) == 0:
                 break
 
-            tweetHTML = tweets[np.random.randint(0, len(tweets))]
-
-            tweetPQ = PyQuery(tweetHTML)
+            for i in range(4):
+                tweetHTML = tweets[np.random.randint(0, len(tweets))]
+                tweetPQ = PyQuery(tweetHTML)
+                if tweetPQ('p.js-tweet-text').attr('lang') == 'en': break
+            else:
+                continue
             tweet = got.models.Tweet()
 
             # process text
@@ -107,21 +117,16 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
             id = tweetPQ.attr("data-tweet-id")
             usr_id = int(tweetPQ("a.js-user-profile-link").attr("data-user-id"))
 
-            geo = ''
-            geoSpan = tweetPQ('span.Tweet-geo')
-            if len(geoSpan) > 0:
-                geo = geoSpan.attr('title')
 
-            tweet.id = id
+
+            tweet.tweet_id = id
             tweet.user_id = usr_id
-            tweet.wordnouns = (",").join(blob.noun_phrases)
             tweet.polarity = polarity
             tweet.subjectivity= subjectivity
             tweet.text = txt
             tweet.date = datetime.datetime.fromtimestamp(dateSec)
-            tweet.formatted_date = datetime.datetime.fromtimestamp(dateSec).strftime("%a %b %d %X +0000 %Y")
             tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(txt1))
-            tweet.geo = geo
+            tweet.location = api.get_user(id=usr_id).location
 
             total_counter += 1
             resultsAux.append(tweet)
@@ -136,13 +141,13 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
                 active = False
                 break
     except KeyboardInterrupt as inst:
-        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter+len(resultsAux))
+        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter)
         raise KeyboardInterrupt
     except Exception as inst:
-        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter+len(resultsAux))
+        interruptHandler(inst, tweetCriteria, refreshCursor, total_counter)
         raise Exception(inst)
     else:
-        print("We successfully download {0} tweets on".format(total_counter+len(resultsAux)) + month)
+        print("We successfully download {0} tweets on".format(total_counter) + month)
     finally:
         if receiveBuffer and len(resultsAux) > 0:
             output_counter += len(resultsAux)

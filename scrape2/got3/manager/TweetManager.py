@@ -91,7 +91,6 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
             for i in range(4):
                 tweetHTML = tweets[np.random.randint(0, len(tweets))]
                 tweetPQ = PyQuery(tweetHTML)
-                sss=tweetPQ('p.js-tweet-text').attr('lang')
                 if tweetPQ('p.js-tweet-text').attr('lang') == 'en': break
             else: continue
             tweet = got.models.Tweet()
