@@ -79,7 +79,7 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
     try:
         while active:
             tweets = []
-            for i in range(4):
+            for i in range(3):
                 json = getJsonReponse(urlInfo, refreshCursor, cookieJar, month)
                 if len(json['items_html'].strip()) == 0:
                     break
@@ -90,7 +90,7 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
             if len(tweets) == 0:
                 break
 
-            for i in range(4):
+            for i in range(3):
                 tweetHTML = tweets[np.random.randint(0, len(tweets))]
                 tweetPQ = PyQuery(tweetHTML)
                 if tweetPQ('p.js-tweet-text').attr('lang') == 'en': break
