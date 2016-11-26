@@ -147,7 +147,7 @@ def getTweets(tweetCriteria, receiveBuffer = None, bufferLength = 100):
         interruptHandler(inst, tweetCriteria, refreshCursor, total_counter)
         raise Exception(inst)
     else:
-        print("We successfully download {0} tweets on".format(total_counter) + month)
+        print("We successfully download {0} tweets on ".format(total_counter) + month)
     finally:
         if receiveBuffer and len(resultsAux) > 0:
             output_counter += len(resultsAux)
