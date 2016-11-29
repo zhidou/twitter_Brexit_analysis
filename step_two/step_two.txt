@@ -11,9 +11,12 @@
         (3) Naive Bayes...
         (4) Multi-perceptron neural network
 
+<<<<<<< HEAD
+=======
 Now what we should do
 1.  Figure out how to use naive bayes to solve..
     basically the input and the output..
 
+>>>>>>> 01420d6ffb769dc093e523e77ec77101237eeedd
 remain : stay, left wing, 
 leave: right wing 
