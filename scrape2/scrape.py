@@ -23,7 +23,7 @@ def scrape(criteria):
     tweetCriteria = got.manager.TweetCriteria()
     setcriteria(criteria, tweetCriteria)
     print("Begin to scrape data from " + tweetCriteria.month)
-    outputFile = open("Tweets " + tweetCriteria.month + ".csv", "+a")
+    outputFile = open("Tweets" + tweetCriteria.month + ".csv", "+a")
     writer = csv.writer(outputFile)
     writer.writerow(['tweet_id','user_id', 'time', 'geo', 'location', 'text', 'hashtags'])
     print('Downloading data of ' + tweetCriteria.month + '...')
