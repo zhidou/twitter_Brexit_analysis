@@ -28,8 +28,8 @@ def maybe_download(filename, expected_bytes):
             raise Exception('Failed to verify ' + filename + '. Can you get to it with a browser?')
     return filename
 
-# filename = maybe_download('text8.zip', 31344016)
-filename = 'text8.zip'
+filename = maybe_download('text8.zip', 31344016)
+# filename = 'text8.zip'
 
 def read_data(filename):
     with zipfile.ZipFile(filename) as f:
@@ -69,6 +69,7 @@ print('Most common words (+UNK)', count[:5])
 print('Sample data', data[:10], [reverse_dictionary[i] for i in data[:10]])
 
 data_index = 0
+
 
 # Step 3: Function to generate a training batch for the skip-gram model.
 def generate_batch(batch_size, num_skips, skip_window):
