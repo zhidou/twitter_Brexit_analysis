@@ -1,0 +1,72 @@
+Step 1: Load data
+Data size 2665329
+Step 2: Build the dictionary and replace rare words with UNK token
+Most common words (+UNK) [['UNK', 142087], ('the', 90888), ('to', 68183), ('Brexit', 67644), ('of', 44172)]
+Sample data [0, 5795, 0, 1817, 9841, 922, 21, 3006, 3, 35] ['UNK', 'offshore', 'UNK', 'VIDEO', 'Hitachi', 'boss', 'I', 'oppose', 'Brexit', 'Britain']
+Step 3: Function to generate a training batch for the skip-gram model
+Step 4: Build and train a skip-gram model
+Step 5: Begin training
+Initialized
+Average loss at step  0 :  224.623519897
+Nearest to you: Nat, G20, T2T, Unio, democrac, Young, utterly, ahea,
+Average loss at step  2000 :  60.4151455045
+Average loss at step  4000 :  15.663153904
+Average loss at step  6000 :  8.15571578026
+Average loss at step  8000 :  6.06339993799
+Average loss at step  10000 :  5.38582827759
+Nearest to you: I, they, utterly, resigns, Unio, Nat, G20, T2T,
+Average loss at step  12000 :  5.42472978294
+Average loss at step  14000 :  5.02547779167
+Average loss at step  16000 :  4.90157148969
+Average loss at step  18000 :  5.08062673545
+Average loss at step  20000 :  4.96251399529
+Nearest to you: they, we, I, We, Nat, it, Unio, utterly,
+Average loss at step  22000 :  4.75347743189
+Average loss at step  24000 :  4.68989359021
+Average loss at step  26000 :  4.64549840903
+Average loss at step  28000 :  4.60738355529
+Average loss at step  30000 :  4.58180600321
+Nearest to you: we, they, I, We, You, Unio, it, Nat,
+Average loss at step  32000 :  4.5649726429
+Average loss at step  34000 :  4.55583653343
+Average loss at step  36000 :  4.52973402727
+Average loss at step  38000 :  4.51672182918
+Average loss at step  40000 :  4.51076090848
+Nearest to you: we, they, I, You, We, Unio, you're, people,
+Average loss at step  42000 :  4.55790497828
+Average loss at step  44000 :  4.53535631001
+Average loss at step  46000 :  4.47409001493
+Average loss at step  48000 :  4.44865522397
+Average loss at step  50000 :  4.44620004618
+Nearest to you: we, they, I, You, We, you're, us, people,
+Average loss at step  52000 :  4.50687368274
+Average loss at step  54000 :  4.45897444928
+Average loss at step  56000 :  4.45979071879
+Average loss at step  58000 :  4.49420821965
+Average loss at step  60000 :  4.45371435666
+Nearest to you: we, they, I, You, We, you're, Unio, us,
+Average loss at step  62000 :  4.4110405637
+Average loss at step  64000 :  4.41065346622
+Average loss at step  66000 :  4.40791807008
+Average loss at step  68000 :  4.38824302709
+Average loss at step  70000 :  4.38157531524
+Nearest to you: we, they, You, I, you're, We, Unio, people,
+Average loss at step  72000 :  4.3874071629
+Average loss at step  74000 :  4.3785677613
+Average loss at step  76000 :  4.36820684481
+Average loss at step  78000 :  4.35789400184
+Average loss at step  80000 :  4.38332452786
+Nearest to you: we, they, You, I, you're, We, Unio, people,
+Average loss at step  82000 :  4.4139410826
+Average loss at step  84000 :  4.40712377763
+Average loss at step  86000 :  4.35567182231
+Average loss at step  88000 :  4.34128289032
+Average loss at step  90000 :  4.35694192874
+Nearest to you: we, they, You, I, you're, We, people, us,
+Average loss at step  92000 :  4.39385591805
+Average loss at step  94000 :  4.34925283408
+Average loss at step  96000 :  4.37038524139
+Average loss at step  98000 :  4.38753099048
+Average loss at step  100000 :  4.34252413988
+Nearest to you: we, they, You, I, you're, We, They, them,
+Embedding finished!!!!
