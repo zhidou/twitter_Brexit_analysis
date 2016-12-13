@@ -7,7 +7,7 @@ import math
 import random
 import pandas as pd
 from six.moves import xrange
-
+import json
 import numpy as np
 import tensorflow as tf
 
@@ -47,6 +47,8 @@ def build_dataset(words):
         data.append(index)
     count[0][1] = unk_count
     reverse_dictionary = dict(zip(dictionary.values(), dictionary.keys()))
+    with open('dictionary.txt', '+w') as f:
+        json.dump(dictionary, f)
     return data, count, dictionary, reverse_dictionary
 
 data, count, dictionary, reverse_dictionary = build_dataset(words)
