@@ -192,16 +192,16 @@ Xk1.shape
 
 
 # In[ ]:
-
-ss = []
-for k in range(1,30):
+print('do clusterring')
+error = np.zeros(31)
+for k in range(1,31):
     vectorsk1 = Xk1[:,:k]
     kmeans = KMeans(n_clusters=5, init='k-means++', max_iter=100, n_init=10, random_state=0)
     kmeans.fit_predict(vectorsk1)
     labelsk1 = kmeans.labels_
-    if k >= 2: ss.append(metrics.silhouette_score(vectorsk1,kmeans.labels_,metric='euclidean'))
-
-df_error = pd.DataFrame(ss, columns=['error'])
+    error[k] = kmeans.inertia_
+    print('iteration: ',k) 
+df_error = pd.DataFrame(error, columns=['error'])
 df_error.to_csv('error.csv')
 
 
