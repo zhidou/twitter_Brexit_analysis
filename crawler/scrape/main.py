@@ -1,31 +1,7 @@
 from multiprocessing import Pool
 from scrape import scrape
-<<<<<<< HEAD
-import os, json, time
-
-def load_data(data):
-    criteria = []
-    currentPath = os.getcwd()
-    for month in data:
-        fname = month['month'] + '.txt'
-        dic={}
-        if os.path.isfile(os.path.join(currentPath, fname)):
-            with open(fname, 'r') as f:
-                ss = json.load(f)
-                for keys in ss.keys():
-                    dic[keys] = ss[keys]
-                criteria.append(dic)
-        else:
-            print("No data exist!!")
-            return {}
-    return criteria
-
-
-
-=======
 from helper import load_data, interrupt_handler_main
 import time
->>>>>>> zhidou
 
 def main(data, resume=False):
     if type(data) == list and resume:
@@ -60,34 +36,6 @@ def main(data, resume=False):
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-	dic1={}
-	dic2={}
-	dic3={}
-	dic1['querysearch'] = 'Brexit'
-	dic1['since'] = '2016-05-01'
-	dic1['until'] = '2016-05-10'
-	dic1['topTweets'] = True
-	dic1['lang'] = 'en'
-	dic1['refreshCursor'] = ''
-	dic1['month'] = 'May1'
-
-	dic2['querysearch'] = 'Brexit'
-	dic2['since'] = '2016-05-11'
-	dic2['until'] = '2016-05-20'
-	dic2['topTweets'] = True
-	dic2['lang'] = 'en'
-	dic2['refreshCursor'] = ''
-	dic2['month'] = 'May2'
-
-	dic3['querysearch'] = 'Brexit'
-	dic3['since'] = '2016-05-20'
-	dic3['until'] = '2016-05-31'
-	dic3['topTweets'] = True
-	dic3['lang'] = 'en'
-	dic3['refreshCursor'] = ''
-	dic3['month'] = 'May3'
-=======
     dic1={}
     dic2={}
     dic3={}
@@ -167,17 +115,7 @@ if __name__ == '__main__':
     data4 = [dic1, dic2, dic3, dic4, dic5, dic6]
     beginT = time.time()
     data3 = ['June3']
-<<<<<<< HEAD
-    main(data3, True)
->>>>>>> zhidou
 
-	data1 = [dic1]
-	data2 = [dic1, dic2]
-	beginT = time.time()
-	data3 = [dic1,dic2,dic3]
-	main(data3, resume = True)
-=======
     main(data4)
->>>>>>> zhidou
 
 	print("Tollay running time: {}".format(time.time() - beginT))
