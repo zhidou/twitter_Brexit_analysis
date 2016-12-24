@@ -50,7 +50,7 @@ def generate_batch(data, label, batch_size):
             sentence.append(embed[dictionary.get(word.lower(), 0)])
             length += 1
         batch_x.append(sentence)
-        batch_y.append(train_label[global_index])
+        batch_y.append(label[global_index])
         batch_l.append(length)
         global_index = (global_index + 1) % len(data)
         if length > maxlen: maxlen = length
@@ -107,6 +107,7 @@ with tf.Session() as sess:
     sess.run(init)
     for i in range(training_iters):
         batch_x, batch_y, batch_l = generate_batch(train_data, train_label, batch_size=batch_size)
+        #         print(len(batch_x), len(batch_y), len(batch_l))
         output = sess.run(optimizer, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l})
 
         if i % display_step == 0:
@@ -116,5 +117,5 @@ with tf.Session() as sess:
             print("Iter " + str(i) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
-
-    print("Testing Accuracy:", sess.run(accuracy, feed_dict={x: test_data, y: test_label, seqlen: test_len})), y: test_label}))
+    batch_x, batch_y, batch_l = generate_batch(test_data, test_label, batch_size=len(test_data))
+    print("Testing Accuracy:", sess.run(accuracy, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l}))
