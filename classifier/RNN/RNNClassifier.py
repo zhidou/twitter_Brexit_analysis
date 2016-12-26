@@ -65,7 +65,7 @@ def generate_batch(data, label, batch_size):
 
 # Parameters
 learning_rate = 0.001
-training_iters = 100000
+training_iters = 10000
 batch_size = 128
 display_step = 100
 hidden_layer = 1024
