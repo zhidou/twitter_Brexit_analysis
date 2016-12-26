@@ -33,7 +33,7 @@ for i in test_temp:
     else: test_label.append([1, 0])
 
 # return batch in shape [batch_size, sentence_len, embedding_len]
-def generate_batch(data, label, batch_size):
+def generate_batch(data, label, batch_size, test = False):
     global global_index
     batch_x = []
     batch_y = []
@@ -50,7 +50,8 @@ def generate_batch(data, label, batch_size):
             sentence.append(embed[dictionary.get(word.lower(), 0)])
             length += 1
         batch_x.append(sentence)
-        batch_y.append(label[global_index])
+        if test: batch_y.append(label[i])
+        else: batch_y.append(label[global_index])
         batch_l.append(length)
         global_index = (global_index + 1) % len(data)
         if length > maxlen: maxlen = length
@@ -107,7 +108,7 @@ with tf.Session() as sess:
     sess.run(init)
     for i in range(training_iters):
         batch_x, batch_y, batch_l = generate_batch(train_data, train_label, batch_size=batch_size)
-        #         print(len(batch_x), len(batch_y), len(batch_l))
+        print('Iteration: ', i)
         output = sess.run(optimizer, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l})
 
         if i % display_step == 0:
