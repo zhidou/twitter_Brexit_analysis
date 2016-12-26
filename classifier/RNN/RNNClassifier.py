@@ -107,7 +107,7 @@ with tf.Session() as sess:
     sess.run(init)
     for i in range(training_iters):
         batch_x, batch_y, batch_l = generate_batch(train_data, train_label, batch_size=batch_size)
-        #         print(len(batch_x), len(batch_y), len(batch_l))
+        print('Iteration: ', i)
         output = sess.run(optimizer, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l})
 
         if i % display_step == 0:
