@@ -118,5 +118,5 @@ with tf.Session() as sess:
             print("Iter " + str(i) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
-    batch_x, batch_y, batch_l = generate_batch(test_data, test_label, batch_size=len(test_data))
+    batch_x, batch_y, batch_l = generate_batch(test_data, test_label, batch_size=len(test_data), test=True)
     print("Testing Accuracy:", sess.run(accuracy, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l}))
