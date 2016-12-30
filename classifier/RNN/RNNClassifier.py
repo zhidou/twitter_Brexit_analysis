@@ -33,8 +33,7 @@ for i in test_temp:
     else: test_label.append([1, 0])
 
 # return batch in shape [batch_size, sentence_len, embedding_len]
-def generate_batch(data, label, batch_size, test = False):
-    global global_index
+def generate_batch(data, label, batch_size, indeces):
     batch_x = []
     batch_y = []
     batch_l = []
@@ -50,10 +49,9 @@ def generate_batch(data, label, batch_size, test = False):
             sentence.append(embed[dictionary.get(word.lower(), 0)])
             length += 1
         batch_x.append(sentence)
-        if test: batch_y.append(label[i])
-        else: batch_y.append(label[global_index])
+        batch_y.append(label[indeces])
+        indeces = (indeces + 1) % len(data)
         batch_l.append(length)
-        global_index = (global_index + 1) % len(data)
         if length > maxlen: maxlen = length
 
     # padding
@@ -62,7 +60,7 @@ def generate_batch(data, label, batch_size, test = False):
         for j in range(maxlen - len(batch_x[i])):
             batch_x[i].append(emptyword)
 
-    return batch_x, batch_y, batch_l
+    return batch_x, batch_y, batch_l, indeces
 
 # Parameters
 learning_rate = 0.001
@@ -72,7 +70,6 @@ display_step = 100
 hidden_layer = 1024
 classes = 2
 embeddingLen = 128
-global_index = 0
 
 # tf Graph input
 x = tf.placeholder("float", [None, None, embeddingLen], name='Inputs')
@@ -106,9 +103,9 @@ init = tf.initialize_all_variables()
 # run network
 with tf.Session() as sess:
     sess.run(init)
+    indeces = 0
     for i in range(training_iters):
-        batch_x, batch_y, batch_l = generate_batch(train_data, train_label, batch_size=batch_size)
-        print('Iteration: ', i)
+        batch_x, batch_y, batch_l, indeces = generate_batch(train_data, train_label, batch_size=batch_size,
         output = sess.run(optimizer, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l})
 
         if i % display_step == 0:
@@ -118,5 +115,13 @@ with tf.Session() as sess:
             print("Iter " + str(i) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
-    batch_x, batch_y, batch_l = generate_batch(test_data, test_label, batch_size=len(test_data), test=True)
-    print("Testing Accuracy:", sess.run(accuracy, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l}))
+    indeces = 0
+    test_pret = []
+    for i in range(0, len(test_data), batch_size):
+        if len(test_data) - indeces < 128: batch_size = len(test_data) - indeces
+        batch_x, batch_y, batch_l, indeces = generate_batch(test_data, test_label, batch_size=batch_size, indeces=indeces)
+        test_pret.extend(sess.run(pred, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l}).tolist())
+    test_pret = np.array(test_pret)
+    accu = np.equal(test_pret.argmax(1), np.array(test_label).argmax(1)).astype(np.int32)
+    accu = accu.sum() / len(accu)
+    print("Test accuracy: ", accu)
