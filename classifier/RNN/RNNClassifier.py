@@ -105,9 +105,9 @@ with tf.Session() as sess:
     sess.run(init)
     indeces = 0
     for i in range(training_iters):
-        batch_x, batch_y, batch_l, indeces = generate_batch(train_data, train_label, batch_size=batch_size,
-        output = sess.run(optimizer, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l})
+        batch_x, batch_y, batch_l, indeces = generate_batch(train_data, train_label, batch_size=batch_size, indeces=indeces)
 
+        output = sess.run(optimizer, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l})
         if i % display_step == 0:
             acc = sess.run(accuracy, feed_dict={x: batch_x, y: batch_y, seqlen: batch_l})
             # Calculate batch loss
