@@ -1,31 +1,7 @@
 from multiprocessing import Pool
 from scrape import scrape
-<<<<<<< HEAD
-import os, json, time
-
-def load_data(data):
-    criteria = []
-    currentPath = os.getcwd()
-    for month in data:
-        fname = month['month'] + '.txt'
-        dic={}
-        if os.path.isfile(os.path.join(currentPath, fname)):
-            with open(fname, 'r') as f:
-                ss = json.load(f)
-                for keys in ss.keys():
-                    dic[keys] = ss[keys]
-                criteria.append(dic)
-        else:
-            print("No data exist!!")
-            return {}
-    return criteria
-
-
-
-=======
 from helper import load_data, interrupt_handler_main
 import time
->>>>>>> zhidou
 
 def main(data, resume=False):
     if type(data) == list and resume:
